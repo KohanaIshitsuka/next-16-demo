@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { logout } from "@/lib/actions/auth";
 import { createSupabaseServerClient } from "@/lib/supabase";
 
@@ -56,12 +58,12 @@ export default async function Home() {
             <div className="flex items-center gap-3">
               {user ? (
                 <>
-                  <a
+                  <Link
                     href="/recipes/new"
                     className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
                   >
                     レシピを登録
-                  </a>
+                  </Link>
                   <form action={logout}>
                     <button
                       type="submit"
@@ -73,18 +75,18 @@ export default async function Home() {
                 </>
               ) : (
                 <>
-                  <a
+                  <Link
                     href="/login"
                     className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
                   >
                     ログイン
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/signup"
                     className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
                   >
                     新規登録
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
@@ -201,12 +203,12 @@ export default async function Home() {
                         Like {recipe.likes ?? "0"}
                       </p>
                     </div>
-                    <a
+                    <Link
                       href={`/recipes/${recipe.id}`}
                       className="rounded-full border border-stone-200 bg-white px-4 py-2 text-xs font-semibold text-stone-700 transition group-hover:border-stone-900 group-hover:text-stone-900"
                     >
                       レシピを見る
-                    </a>
+                    </Link>
                   </div>
                 </article>
               ))}

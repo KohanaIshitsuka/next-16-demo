@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { logout } from "@/lib/actions/auth";
@@ -31,12 +32,12 @@ export default async function RecipeNewPage() {
               </h1>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <a
+              <Link
                 href="/"
                 className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
               >
                 一覧に戻る
-              </a>
+              </Link>
               <form action={logout}>
                 <button
                   type="submit"

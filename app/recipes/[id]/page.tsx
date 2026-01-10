@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { logout } from "@/lib/actions/auth";
@@ -98,12 +99,12 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
               </h1>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <a
+              <Link
                 href="/"
                 className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
               >
                 一覧に戻る
-              </a>
+              </Link>
               {user ? (
                 <form action={logout}>
                   <button
@@ -114,12 +115,12 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                   </button>
                 </form>
               ) : (
-                <a
+                <Link
                   href="/login"
                   className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
                 >
                   ログイン
-                </a>
+                </Link>
               )}
             </div>
           </header>
@@ -178,12 +179,12 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
               </div>
               {isOwner ? (
                 <div className="flex flex-wrap gap-3">
-                  <a
+                  <Link
                     href={`/recipes/${recipe.id}/edit`}
                     className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-semibold text-stone-700"
                   >
                     編集
-                  </a>
+                  </Link>
                   <form action={deleteRecipe}>
                     <input type="hidden" name="id" value={recipe.id} />
                     <button
