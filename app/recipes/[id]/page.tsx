@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { getSupabaseClient } from "@/lib/supabase";
+import { logout } from "@/lib/actions/auth";
+import { createSupabaseServerClient } from "@/lib/supabase";
 
+import { deleteRecipe } from "./actions";
 type RecipeDetail = {
   id: number;
   title: string;
@@ -15,6 +17,7 @@ type RecipeDetail = {
   servings: string | null;
   ingredients: string[] | string | null;
   steps: string[] | string | null;
+  user_id: string | null;
 };
 
 type RecipePageProps = {
@@ -31,11 +34,11 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
     notFound();
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("recipes")
     .select(
-      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps"
+      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps,user_id"
     )
     .eq("id", recipeId)
     .single();
@@ -73,6 +76,10 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
           .map((item) => item.trim())
           .filter(Boolean);
 
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
+  const isOwner = user?.id && user.id === recipe.user_id;
+
   return (
     <div className="min-h-screen bg-[#f6f1ea] text-stone-900">
       <div className="relative overflow-hidden">
@@ -90,12 +97,31 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                 {recipe.title}
               </h1>
             </div>
-            <a
-              href="/"
-              className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
-            >
-              一覧に戻る
-            </a>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="/"
+                className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
+              >
+                一覧に戻る
+              </a>
+              {user ? (
+                <form action={logout}>
+                  <button
+                    type="submit"
+                    className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                  >
+                    ログアウト
+                  </button>
+                </form>
+              ) : (
+                <a
+                  href="/login"
+                  className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                >
+                  ログイン
+                </a>
+              )}
+            </div>
           </header>
 
           <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -150,6 +176,25 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                   </div>
                 </div>
               </div>
+              {isOwner ? (
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href={`/recipes/${recipe.id}/edit`}
+                    className="rounded-full border border-stone-200 bg-white px-4 py-2 text-sm font-semibold text-stone-700"
+                  >
+                    編集
+                  </a>
+                  <form action={deleteRecipe}>
+                    <input type="hidden" name="id" value={recipe.id} />
+                    <button
+                      type="submit"
+                      className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700"
+                    >
+                      削除
+                    </button>
+                  </form>
+                </div>
+              ) : null}
             </div>
 
             <aside className="space-y-6">

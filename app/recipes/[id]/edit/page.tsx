@@ -1,16 +1,70 @@
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-import { logout } from "@/lib/actions/auth";
 import { createSupabaseServerClient } from "@/lib/supabase";
 
-import { createRecipe } from "./actions";
+import { updateRecipe } from "./actions";
 
-export default async function RecipeNewPage() {
+type RecipeEditPageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+type RecipeEditData = {
+  id: number;
+  title: string;
+  description: string | null;
+  time: string | null;
+  difficulty: string | null;
+  calories: string | null;
+  author: string | null;
+  likes: string | null;
+  tag: string | null;
+  servings: string | null;
+  ingredients: string[] | string | null;
+  steps: string[] | string | null;
+  user_id: string | null;
+};
+
+function joinLines(value: string[] | string | null) {
+  if (!value) {
+    return "";
+  }
+
+  return Array.isArray(value) ? value.join("\n") : value;
+}
+
+export default async function RecipeEditPage({ params }: RecipeEditPageProps) {
+  const { id } = await params;
+  const recipeId = Number(id);
+
+  if (!Number.isFinite(recipeId)) {
+    notFound();
+  }
+
   const supabase = await createSupabaseServerClient();
   const { data: authData } = await supabase.auth.getUser();
 
   if (!authData.user) {
     redirect("/login");
+  }
+
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(
+      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps,user_id"
+    )
+    .eq("id", recipeId)
+    .single();
+
+  if (error || !data) {
+    notFound();
+  }
+
+  const recipe = data as RecipeEditData;
+
+  if (recipe.user_id !== authData.user.id) {
+    notFound();
   }
 
   return (
@@ -24,40 +78,32 @@ export default async function RecipeNewPage() {
           <header className="flex flex-wrap items-center justify-between gap-6">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-stone-500">
-                New Recipe
+                Edit Recipe
               </p>
               <h1 className="text-3xl font-semibold text-stone-900">
-                レシピを登録する
+                レシピを編集する
               </h1>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <a
-                href="/"
-                className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
-              >
-                一覧に戻る
-              </a>
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
-                >
-                  ログアウト
-                </button>
-              </form>
-            </div>
+            <a
+              href={`/recipes/${recipe.id}`}
+              className="rounded-full border border-stone-200 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 shadow-sm backdrop-blur"
+            >
+              詳細に戻る
+            </a>
           </header>
 
           <form
-            action={createRecipe}
+            action={updateRecipe}
             className="space-y-6 rounded-3xl border border-white/70 bg-white/80 p-8 shadow-xl shadow-stone-900/10 backdrop-blur"
           >
+            <input type="hidden" name="id" value={recipe.id} />
             <div className="grid gap-6 md:grid-cols-2">
               <label className="space-y-2 text-sm font-medium text-stone-700">
                 レシピ名
                 <input
                   name="title"
                   required
+                  defaultValue={recipe.title}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -65,6 +111,7 @@ export default async function RecipeNewPage() {
                 タグ
                 <input
                   name="tag"
+                  defaultValue={recipe.tag ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -72,7 +119,7 @@ export default async function RecipeNewPage() {
                 調理時間
                 <input
                   name="time"
-                  placeholder="例: 25分"
+                  defaultValue={recipe.time ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -80,7 +127,7 @@ export default async function RecipeNewPage() {
                 難易度
                 <input
                   name="difficulty"
-                  placeholder="例: 初級"
+                  defaultValue={recipe.difficulty ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -88,7 +135,7 @@ export default async function RecipeNewPage() {
                 カロリー
                 <input
                   name="calories"
-                  placeholder="例: 420kcal"
+                  defaultValue={recipe.calories ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -96,7 +143,7 @@ export default async function RecipeNewPage() {
                 分量
                 <input
                   name="servings"
-                  placeholder="例: 2人分"
+                  defaultValue={recipe.servings ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -104,7 +151,7 @@ export default async function RecipeNewPage() {
                 作成者
                 <input
                   name="author"
-                  placeholder="例: Yui"
+                  defaultValue={recipe.author ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -112,7 +159,7 @@ export default async function RecipeNewPage() {
                 Like 数
                 <input
                   name="likes"
-                  placeholder="例: 1.2k"
+                  defaultValue={recipe.likes ?? ""}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -123,6 +170,7 @@ export default async function RecipeNewPage() {
               <textarea
                 name="description"
                 rows={3}
+                defaultValue={recipe.description ?? ""}
                 className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
               />
             </label>
@@ -133,6 +181,7 @@ export default async function RecipeNewPage() {
                 <textarea
                   name="ingredients"
                   rows={6}
+                  defaultValue={joinLines(recipe.ingredients)}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -141,6 +190,7 @@ export default async function RecipeNewPage() {
                 <textarea
                   name="steps"
                   rows={6}
+                  defaultValue={joinLines(recipe.steps)}
                   className="w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 shadow-sm focus:border-stone-900 focus:outline-none"
                 />
               </label>
@@ -148,13 +198,13 @@ export default async function RecipeNewPage() {
 
             <div className="flex flex-wrap items-center justify-between gap-4">
               <p className="text-xs uppercase tracking-widest text-stone-400">
-                Supabase に保存されます
+                変更内容を保存します
               </p>
               <button
                 type="submit"
                 className="rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 shadow-lg shadow-stone-900/20"
               >
-                レシピを保存
+                変更を保存
               </button>
             </div>
           </form>

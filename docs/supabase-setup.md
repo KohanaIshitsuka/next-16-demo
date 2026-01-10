@@ -27,6 +27,7 @@ create table if not exists public.recipes (
   servings text,
   ingredients text[],
   steps text[],
+  user_id uuid references auth.users(id),
   created_at timestamptz not null default now()
 );
 ```
@@ -47,7 +48,20 @@ create policy "authenticated insert recipes"
 on public.recipes
 for insert
 to authenticated
-with check (true);
+with check (auth.uid() = user_id);
+
+create policy "owner update recipes"
+on public.recipes
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "owner delete recipes"
+on public.recipes
+for delete
+to authenticated
+using (auth.uid() = user_id);
 ```
 
 注意: この設定では、未ログインのユーザーは登録できません。登録を許可する場合は認証を導入するか、サーバー側でサービスロールキーを使った登録処理に切り替えてください。

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { createSupabaseActionClient } from "@/lib/supabase";
 
@@ -16,7 +16,14 @@ function splitLines(value: FormDataEntryValue | null): string[] {
     .filter(Boolean);
 }
 
-export async function createRecipe(formData: FormData) {
+export async function updateRecipe(formData: FormData) {
+  const rawId = String(formData.get("id") ?? "");
+  const recipeId = Number(rawId);
+
+  if (!Number.isFinite(recipeId)) {
+    notFound();
+  }
+
   const title = String(formData.get("title") ?? "").trim();
 
   if (!title) {
@@ -28,6 +35,20 @@ export async function createRecipe(formData: FormData) {
 
   if (authError || !authData.user) {
     redirect("/login");
+  }
+
+  const { data: recipe, error: fetchError } = await supabase
+    .from("recipes")
+    .select("user_id")
+    .eq("id", recipeId)
+    .single();
+
+  if (fetchError || !recipe) {
+    notFound();
+  }
+
+  if (recipe.user_id !== authData.user.id) {
+    notFound();
   }
 
   const payload = {
@@ -42,19 +63,18 @@ export async function createRecipe(formData: FormData) {
     servings: String(formData.get("servings") ?? "").trim() || null,
     ingredients: splitLines(formData.get("ingredients")),
     steps: splitLines(formData.get("steps")),
-    user_id: authData.user.id,
   };
 
-  const { data, error } = await supabase
+  const { error: updateError } = await supabase
     .from("recipes")
-    .insert(payload)
-    .select("id")
-    .single();
+    .update(payload)
+    .eq("id", recipeId);
 
-  if (error) {
-    throw new Error(`レシピの保存に失敗しました: ${error.message}`);
+  if (updateError) {
+    throw new Error(`レシピの更新に失敗しました: ${updateError.message}`);
   }
 
   revalidatePath("/");
-  redirect(`/recipes/${data.id}`);
+  revalidatePath(`/recipes/${recipeId}`);
+  redirect(`/recipes/${recipeId}`);
 }

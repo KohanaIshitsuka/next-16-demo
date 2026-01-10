@@ -1,12 +1,8 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-let cachedClient: SupabaseClient | null = null;
-
-export function getSupabaseClient(): SupabaseClient {
-  if (cachedClient) {
-    return cachedClient;
-  }
-
+function getSupabaseConfig() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabasePublishableKey =
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -17,11 +13,35 @@ export function getSupabaseClient(): SupabaseClient {
     );
   }
 
-  cachedClient = createClient(supabaseUrl, supabasePublishableKey, {
-    auth: {
-      persistSession: false,
+  return { supabaseUrl, supabasePublishableKey };
+}
+
+export async function createSupabaseServerClient(): Promise<SupabaseClient> {
+  const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
+  const cookieStore = await cookies();
+
+  return createServerClient(supabaseUrl, supabasePublishableKey, {
+    cookies: {
+      get: (name) => cookieStore.get(name)?.value,
+      set: () => {},
+      remove: () => {},
     },
   });
+}
 
-  return cachedClient;
+export async function createSupabaseActionClient(): Promise<SupabaseClient> {
+  const { supabaseUrl, supabasePublishableKey } = getSupabaseConfig();
+  const cookieStore = await cookies();
+
+  return createServerClient(supabaseUrl, supabasePublishableKey, {
+    cookies: {
+      get: (name) => cookieStore.get(name)?.value,
+      set: (name, value, options) => {
+        cookieStore.set({ name, value, ...options });
+      },
+      remove: (name, options) => {
+        cookieStore.set({ name, value: "", ...options });
+      },
+    },
+  });
 }

@@ -1,4 +1,5 @@
-import { getSupabaseClient } from "@/lib/supabase";
+import { logout } from "@/lib/actions/auth";
+import { createSupabaseServerClient } from "@/lib/supabase";
 
 type RecipeSummary = {
   id: number;
@@ -13,7 +14,7 @@ type RecipeSummary = {
 };
 
 export default async function Home() {
-  const supabase = getSupabaseClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("recipes")
     .select(
@@ -26,6 +27,8 @@ export default async function Home() {
   }
 
   const recipes = (data ?? []) as RecipeSummary[];
+  const { data: authData } = await supabase.auth.getUser();
+  const user = authData.user;
 
   return (
     <div className="min-h-screen bg-[#f6f1ea] text-stone-900">
@@ -51,15 +54,39 @@ export default async function Home() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <a
-                href="/recipes/new"
-                className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
-              >
-                レシピを登録
-              </a>
-              <button className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20">
-                ログイン
-              </button>
+              {user ? (
+                <>
+                  <a
+                    href="/recipes/new"
+                    className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
+                  >
+                    レシピを登録
+                  </a>
+                  <form action={logout}>
+                    <button
+                      type="submit"
+                      className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                    >
+                      ログアウト
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
+                  >
+                    ログイン
+                  </a>
+                  <a
+                    href="/signup"
+                    className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                  >
+                    新規登録
+                  </a>
+                </>
+              )}
             </div>
           </header>
 
