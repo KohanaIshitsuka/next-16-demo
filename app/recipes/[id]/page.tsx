@@ -1,159 +1,21 @@
 import { notFound } from "next/navigation";
 
-const recipes = [
-  {
-    id: "1",
-    title: "焦がしバターのきのこリゾット",
-    description: "白ワインと出汁でゆっくり炊いて、香りを立たせる一皿。",
-    time: "35分",
-    difficulty: "中級",
-    calories: "520kcal",
-    author: "Yui",
-    likes: "1.2k",
-    tag: "濃厚",
-    servings: "2人分",
-    ingredients: [
-      "米 1合",
-      "ブラウンマッシュルーム 120g",
-      "白ワイン 大さじ2",
-      "バター 15g",
-      "チキンブロス 500ml",
-      "粉チーズ 大さじ2",
-    ],
-    steps: [
-      "きのこを薄切りにして、フライパンでバターと一緒に香ばしく炒める。",
-      "米を加えて透明感が出るまで炒め、白ワインを回し入れる。",
-      "温めたブロスを少しずつ加え、弱火で20分ほど炊く。",
-      "仕上げに粉チーズを混ぜ、塩で味を整える。",
-    ],
-  },
-  {
-    id: "2",
-    title: "レモン香るサーモンのロースト",
-    description: "ハーブと柑橘の香りで爽やかに仕上げるオーブン料理。",
-    time: "25分",
-    difficulty: "初級",
-    calories: "430kcal",
-    author: "Ren",
-    likes: "980",
-    tag: "ヘルシー",
-    servings: "2人分",
-    ingredients: [
-      "生鮭 2切れ",
-      "レモン 1/2個",
-      "オリーブオイル 大さじ1",
-      "タイム 適量",
-      "塩 小さじ1/3",
-      "こしょう 少々",
-    ],
-    steps: [
-      "サーモンに塩こしょうをし、オリーブオイルを回しかける。",
-      "レモンの輪切りとタイムをのせ、200℃のオーブンで12分焼く。",
-      "仕上げにレモン汁を軽く絞って香りを立たせる。",
-    ],
-  },
-  {
-    id: "3",
-    title: "黒ごま担々スープ",
-    description: "豆乳ベースでまろやか、スパイスで奥行きを作る。",
-    time: "20分",
-    difficulty: "初級",
-    calories: "390kcal",
-    author: "Mao",
-    likes: "860",
-    tag: "温活",
-    servings: "2人分",
-    ingredients: [
-      "豆乳 400ml",
-      "鶏ひき肉 120g",
-      "黒すりごま 大さじ2",
-      "味噌 大さじ1",
-      "豆板醤 小さじ1",
-      "にんにく 1片",
-    ],
-    steps: [
-      "にんにくを炒め、香りが立ったら鶏ひき肉を加えて炒める。",
-      "豆板醤と味噌を加え、香りが出たら豆乳を注ぐ。",
-      "黒すりごまを混ぜ、弱火で温めて仕上げる。",
-    ],
-  },
-  {
-    id: "4",
-    title: "自家製トマトソースのラザニア",
-    description: "低温で煮詰めたソースが主役のごちそうレシピ。",
-    time: "60分",
-    difficulty: "上級",
-    calories: "640kcal",
-    author: "Sora",
-    likes: "1.6k",
-    tag: "おもてなし",
-    servings: "4人分",
-    ingredients: [
-      "ラザニアシート 6枚",
-      "トマト缶 1缶",
-      "合いびき肉 200g",
-      "玉ねぎ 1/2個",
-      "赤ワイン 50ml",
-      "モッツァレラ 100g",
-    ],
-    steps: [
-      "玉ねぎを炒め、合いびき肉を加えて色が変わるまで炒める。",
-      "トマト缶と赤ワインを加え、弱火で30分煮詰める。",
-      "耐熱皿にソース、ラザニアシート、チーズを重ねる。",
-      "200℃のオーブンで20分焼く。",
-    ],
-  },
-  {
-    id: "5",
-    title: "焼きねぎと鶏つくねの小鍋",
-    description: "甘いねぎと生姜の香りで、やさしく整う味わい。",
-    time: "30分",
-    difficulty: "中級",
-    calories: "480kcal",
-    author: "Kiko",
-    likes: "1.1k",
-    tag: "ほっとする",
-    servings: "2人分",
-    ingredients: [
-      "鶏ひき肉 200g",
-      "長ねぎ 1本",
-      "生姜 1片",
-      "醤油 大さじ1",
-      "だし 500ml",
-      "みりん 大さじ1",
-    ],
-    steps: [
-      "長ねぎを焼き色がつくまで焼き、香ばしさを出す。",
-      "鶏ひき肉に生姜と醤油を混ぜ、つくねを成形する。",
-      "だしとみりんを温め、焼いたねぎとつくねを煮る。",
-    ],
-  },
-  {
-    id: "6",
-    title: "バジル香る冷製パスタ",
-    description: "トマトとモッツァレラで、軽やかな昼のご褒美。",
-    time: "15分",
-    difficulty: "初級",
-    calories: "360kcal",
-    author: "Haru",
-    likes: "740",
-    tag: "夏向き",
-    servings: "2人分",
-    ingredients: [
-      "カッペリーニ 160g",
-      "トマト 2個",
-      "モッツァレラ 80g",
-      "バジル 適量",
-      "オリーブオイル 大さじ2",
-      "塩 小さじ1/2",
-    ],
-    steps: [
-      "トマトを角切りにし、塩とオリーブオイルで和える。",
-      "カッペリーニを茹でて冷水で冷やし、水気を切る。",
-      "トマトとモッツァレラを合わせ、バジルを散らす。",
-    ],
-  },
-];
+import { getSupabaseClient } from "@/lib/supabase";
+
+type RecipeDetail = {
+  id: number;
+  title: string;
+  description: string | null;
+  time: string | null;
+  difficulty: string | null;
+  calories: string | null;
+  author: string | null;
+  likes: string | null;
+  tag: string | null;
+  servings: string | null;
+  ingredients: string[] | string | null;
+  steps: string[] | string | null;
+};
 
 type RecipePageProps = {
   params: Promise<{
@@ -163,11 +25,53 @@ type RecipePageProps = {
 
 export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const { id } = await params;
-  const recipe = recipes.find((item) => item.id === id);
+  const recipeId = Number(id);
+
+  if (!Number.isFinite(recipeId)) {
+    notFound();
+  }
+
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(
+      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps"
+    )
+    .eq("id", recipeId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      notFound();
+    }
+    throw new Error(`レシピの取得に失敗しました: ${error.message}`);
+  }
+
+  const recipe = data as RecipeDetail;
 
   if (!recipe) {
     notFound();
   }
+
+  const ingredients =
+    recipe.ingredients === null
+      ? []
+      : Array.isArray(recipe.ingredients)
+      ? recipe.ingredients
+      : recipe.ingredients
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
+  const steps =
+    recipe.steps === null
+      ? []
+      : Array.isArray(recipe.steps)
+      ? recipe.steps
+      : recipe.steps
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
 
   return (
     <div className="min-h-screen bg-[#f6f1ea] text-stone-900">
@@ -205,7 +109,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                 <span>{recipe.calories}</span>
               </div>
               <p className="text-base leading-7 text-stone-600">
-                {recipe.description}
+                {recipe.description ?? "レシピの説明が未登録です。"}
               </p>
               <div className="rounded-2xl bg-stone-50 p-6">
                 <p className="text-sm font-semibold text-stone-500">
@@ -217,7 +121,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                       Author
                     </p>
                     <p className="font-semibold text-stone-900">
-                      {recipe.author}
+                      {recipe.author ?? "匿名"}
                     </p>
                   </div>
                   <div className="rounded-xl border border-stone-200 bg-white px-4 py-3">
@@ -225,7 +129,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                       Likes
                     </p>
                     <p className="font-semibold text-stone-900">
-                      {recipe.likes}
+                      {recipe.likes ?? "0"}
                     </p>
                   </div>
                   <div className="rounded-xl border border-stone-200 bg-white px-4 py-3">
@@ -233,7 +137,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                       Servings
                     </p>
                     <p className="font-semibold text-stone-900">
-                      {recipe.servings}
+                      {recipe.servings ?? "未設定"}
                     </p>
                   </div>
                   <div className="rounded-xl border border-stone-200 bg-white px-4 py-3">
@@ -254,10 +158,10 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                   材料
                 </h2>
                 <p className="text-xs uppercase tracking-widest text-stone-400">
-                  {recipe.servings}
+                  {recipe.servings ?? "未設定"}
                 </p>
                 <ul className="mt-4 space-y-2 text-sm text-stone-700">
-                  {recipe.ingredients.map((item) => (
+                  {ingredients.map((item) => (
                     <li
                       key={item}
                       className="rounded-xl border border-stone-200 bg-white px-4 py-2"
@@ -273,7 +177,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
                   作り方
                 </h2>
                 <ol className="mt-4 space-y-3 text-sm text-stone-700">
-                  {recipe.steps.map((step, index) => (
+                  {steps.map((step, index) => (
                     <li
                       key={step}
                       className="rounded-xl border border-stone-200 bg-white px-4 py-3"

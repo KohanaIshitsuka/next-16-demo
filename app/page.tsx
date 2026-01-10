@@ -1,72 +1,31 @@
-export default function Home() {
-  const recipes = [
-    {
-      id: 1,
-      title: "焦がしバターのきのこリゾット",
-      description: "白ワインと出汁でゆっくり炊いて、香りを立たせる一皿。",
-      time: "35分",
-      difficulty: "中級",
-      calories: "520kcal",
-      author: "Yui",
-      likes: "1.2k",
-      tag: "濃厚",
-    },
-    {
-      id: 2,
-      title: "レモン香るサーモンのロースト",
-      description: "ハーブと柑橘の香りで爽やかに仕上げるオーブン料理。",
-      time: "25分",
-      difficulty: "初級",
-      calories: "430kcal",
-      author: "Ren",
-      likes: "980",
-      tag: "ヘルシー",
-    },
-    {
-      id: 3,
-      title: "黒ごま担々スープ",
-      description: "豆乳ベースでまろやか、スパイスで奥行きを作る。",
-      time: "20分",
-      difficulty: "初級",
-      calories: "390kcal",
-      author: "Mao",
-      likes: "860",
-      tag: "温活",
-    },
-    {
-      id: 4,
-      title: "自家製トマトソースのラザニア",
-      description: "低温で煮詰めたソースが主役のごちそうレシピ。",
-      time: "60分",
-      difficulty: "上級",
-      calories: "640kcal",
-      author: "Sora",
-      likes: "1.6k",
-      tag: "おもてなし",
-    },
-    {
-      id: 5,
-      title: "焼きねぎと鶏つくねの小鍋",
-      description: "甘いねぎと生姜の香りで、やさしく整う味わい。",
-      time: "30分",
-      difficulty: "中級",
-      calories: "480kcal",
-      author: "Kiko",
-      likes: "1.1k",
-      tag: "ほっとする",
-    },
-    {
-      id: 6,
-      title: "バジル香る冷製パスタ",
-      description: "トマトとモッツァレラで、軽やかな昼のご褒美。",
-      time: "15分",
-      difficulty: "初級",
-      calories: "360kcal",
-      author: "Haru",
-      likes: "740",
-      tag: "夏向き",
-    },
-  ];
+import { getSupabaseClient } from "@/lib/supabase";
+
+type RecipeSummary = {
+  id: number;
+  title: string;
+  description: string;
+  time: string | null;
+  difficulty: string | null;
+  calories: string | null;
+  author: string | null;
+  likes: string | null;
+  tag: string | null;
+};
+
+export default async function Home() {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from("recipes")
+    .select(
+      "id,title,description,time,difficulty,calories,author,likes,tag"
+    )
+    .order("id");
+
+  if (error) {
+    throw new Error(`レシピの取得に失敗しました: ${error.message}`);
+  }
+
+  const recipes = (data ?? []) as RecipeSummary[];
 
   return (
     <div className="min-h-screen bg-[#f6f1ea] text-stone-900">
@@ -92,9 +51,12 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur">
+              <a
+                href="/recipes/new"
+                className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
+              >
                 レシピを登録
-              </button>
+              </a>
               <button className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20">
                 ログイン
               </button>
@@ -189,8 +151,8 @@ export default function Home() {
                   <div className="space-y-4">
                     <div className="h-32 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#fbd8a2,_#f4f0ea_60%)] p-4">
                       <div className="flex h-full items-end justify-between text-xs font-semibold text-stone-600">
-                        <span>{recipe.time}</span>
-                        <span>{recipe.difficulty}</span>
+                        <span>{recipe.time ?? "調理時間未設定"}</span>
+                        <span>{recipe.difficulty ?? "難易度未設定"}</span>
                       </div>
                     </div>
                     <div>
@@ -198,17 +160,18 @@ export default function Home() {
                         {recipe.title}
                       </h4>
                       <p className="mt-2 text-sm leading-6 text-stone-600">
-                        {recipe.description}
+                        {recipe.description ?? "説明がまだ登録されていません。"}
                       </p>
                     </div>
                   </div>
                   <div className="mt-6 flex items-center justify-between text-sm text-stone-500">
                     <div className="space-y-1">
                       <p>
-                        {recipe.author} ・ {recipe.calories}
+                        {recipe.author ?? "匿名"} ・{" "}
+                        {recipe.calories ?? "カロリー未設定"}
                       </p>
                       <p className="text-xs uppercase tracking-widest text-stone-400">
-                        Like {recipe.likes}
+                        Like {recipe.likes ?? "0"}
                       </p>
                     </div>
                     <a

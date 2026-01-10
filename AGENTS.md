@@ -12,6 +12,7 @@ Next.js 16 の App Router 構成です。主要な配置は以下です。
 - `npm run build`: 本番ビルドの生成。
 - `npm run start`: 本番ビルドの起動（`build` 後に実行）。
 - `npm run lint`: ESLint（`eslint-config-next`）で静的解析。
+- `npm run test:e2e`: Playwright の E2E テスト実行。
 
 ## コーディングスタイル & 命名
 TypeScript/React 前提です。明示的なフォーマッタは未導入のため、既存の書式に合わせ、`npm run lint` が通る形を優先してください。
@@ -21,6 +22,23 @@ TypeScript/React 前提です。明示的なフォーマッタは未導入のた
 ## テスト方針
 E2E テストに Playwright を導入しています。詳細ページの表示確認など、画面遷移が必要な確認に使用します。
 - `npm run test:e2e`: Playwright のテストを実行（必要に応じて `npm install` で依存関係を更新）
+
+## Supabase 設定
+Supabase からレシピを読み書きします。`NEXT_PUBLIC_SUPABASE_URL` と `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` を `.env.local` に設定してください。
+
+想定テーブル: `recipes`
+- `id`: number (PK)
+- `title`: text
+- `description`: text (nullable)
+- `time`: text (nullable)
+- `difficulty`: text (nullable)
+- `calories`: text (nullable)
+- `author`: text (nullable)
+- `likes`: text (nullable)
+- `tag`: text (nullable)
+- `servings`: text (nullable)
+- `ingredients`: text[] or text (改行区切りでも可)
+- `steps`: text[] or text (改行区切りでも可)
 
 ## コミット & PR ガイドライン
 履歴が少ないため厳密な規約はありません。以下を推奨します。
