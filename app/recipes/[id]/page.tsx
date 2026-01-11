@@ -15,6 +15,7 @@ type RecipeDetail = {
   author: string | null;
   likes: string | null;
   tag: string | null;
+  image_url: string | null;
   servings: string | null;
   ingredients: string[] | string | null;
   steps: string[] | string | null;
@@ -39,7 +40,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const { data, error } = await supabase
     .from("recipes")
     .select(
-      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps,user_id"
+      "id,title,description,time,difficulty,calories,author,likes,tag,image_url,servings,ingredients,steps,user_id"
     )
     .eq("id", recipeId)
     .single();
@@ -57,6 +58,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
     notFound();
   }
 
+  const imageUrl = recipe.image_url?.trim();
   const ingredients =
     recipe.ingredients === null
       ? []
@@ -129,6 +131,12 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
 
           <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-6 rounded-3xl border border-white/20 bg-white/10 p-8 shadow-xl shadow-black/40 backdrop-blur">
+              <div
+                className="h-48 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#3a3a42,_#0b0b0d_65%)] bg-cover bg-center"
+                style={
+                  imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined
+                }
+              />
               <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-300">
                 <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
                   {recipe.tag}

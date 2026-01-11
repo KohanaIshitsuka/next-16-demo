@@ -1,9 +1,11 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 import { createSupabaseActionClient } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 function splitLines(value: FormDataEntryValue | null): string[] {
   if (!value) {
@@ -14,6 +16,31 @@ function splitLines(value: FormDataEntryValue | null): string[] {
     .split("\n")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+async function uploadRecipeImage(
+  file: File,
+  supabase: SupabaseClient
+) {
+  const fileExtension = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+  const fileName = `${randomUUID()}.${fileExtension}`;
+  const filePath = `recipes/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("recipes")
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      contentType: file.type || "image/jpeg",
+      upsert: false,
+    });
+
+  if (uploadError) {
+    throw new Error(`画像のアップロードに失敗しました: ${uploadError.message}`);
+  }
+
+  const { data } = supabase.storage.from("recipes").getPublicUrl(filePath);
+
+  return data.publicUrl;
 }
 
 export async function updateRecipe(formData: FormData) {
@@ -51,7 +78,13 @@ export async function updateRecipe(formData: FormData) {
     notFound();
   }
 
-  const payload = {
+  const imageFile = formData.get("image_file");
+  const imageUrl =
+    imageFile instanceof File && imageFile.size > 0
+      ? await uploadRecipeImage(imageFile, supabase)
+      : null;
+
+  const payload: Record<string, string | string[] | null> = {
     title,
     description: String(formData.get("description") ?? "").trim() || null,
     time: String(formData.get("time") ?? "").trim() || null,
@@ -63,6 +96,10 @@ export async function updateRecipe(formData: FormData) {
     ingredients: splitLines(formData.get("ingredients")),
     steps: splitLines(formData.get("steps")),
   };
+
+  if (imageUrl) {
+    payload.image_url = imageUrl;
+  }
 
   const { error: updateError } = await supabase
     .from("recipes")

@@ -13,6 +13,7 @@ type RecipeSummary = {
   author: string | null;
   likes: string | number | null;
   tag: string | null;
+  image_url: string | null;
 };
 
 export default async function Home() {
@@ -20,7 +21,7 @@ export default async function Home() {
   const { data, error } = await supabase
     .from("recipes")
     .select(
-      "id,title,description,time,difficulty,calories,author,likes,tag"
+      "id,title,description,time,difficulty,calories,author,likes,tag,image_url"
     )
     .order("id");
 
@@ -178,16 +179,27 @@ export default async function Home() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {recipes.map((recipe) => (
-                <article
-                  key={recipe.id}
-                  className="group relative flex h-full flex-col justify-between rounded-3xl border border-white/20 bg-white/10 p-6 shadow-lg shadow-black/40 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50"
-                >
+              {recipes.map((recipe) => {
+                const imageUrl = recipe.image_url?.trim();
+                const imageClass = imageUrl
+                  ? "h-32 w-full rounded-2xl bg-zinc-950/60 bg-cover bg-center p-4"
+                  : "h-32 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#3a3a42,_#0b0b0d_65%)] p-4";
+
+                return (
+                  <article
+                    key={recipe.id}
+                    className="group relative flex h-full flex-col justify-between rounded-3xl border border-white/20 bg-white/10 p-6 shadow-lg shadow-black/40 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50"
+                  >
                   <div className="absolute right-6 top-6 rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
                     {recipe.tag}
                   </div>
                   <div className="space-y-4">
-                    <div className="h-32 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#3a3a42,_#0b0b0d_65%)] p-4">
+                    <div
+                      className={imageClass}
+                      style={
+                        imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined
+                      }
+                    >
                       <div className="flex h-full items-end justify-between text-xs font-semibold text-zinc-300">
                         <span>{recipe.time ?? "調理時間未設定"}</span>
                         <span>{recipe.difficulty ?? "難易度未設定"}</span>
@@ -220,7 +232,8 @@ export default async function Home() {
                     </Link>
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           </section>
         </main>

@@ -51,6 +51,7 @@ export default async function RecipeNewPage() {
 
           <form
             action={createRecipe}
+            encType="multipart/form-data"
             className="space-y-6 rounded-3xl border border-white/20 bg-white/10 p-8 shadow-xl shadow-black/40 backdrop-blur"
           >
             <div className="grid gap-6 md:grid-cols-2">
@@ -60,6 +61,15 @@ export default async function RecipeNewPage() {
                   name="title"
                   required
                   className="w-full rounded-2xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-100 shadow-sm focus:border-white focus:outline-none"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-medium text-zinc-200">
+                画像ファイル
+                <input
+                  type="file"
+                  name="image_file"
+                  accept="image/*"
+                  className="w-full rounded-2xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-100 shadow-sm file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black focus:border-white focus:outline-none"
                 />
               </label>
               <label className="space-y-2 text-sm font-medium text-zinc-200">

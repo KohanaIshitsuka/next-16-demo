@@ -15,6 +15,7 @@ type RecipeEditData = {
   id: number;
   title: string;
   description: string | null;
+  image_url: string | null;
   time: string | null;
   difficulty: string | null;
   calories: string | null;
@@ -53,7 +54,7 @@ export default async function RecipeEditPage({ params }: RecipeEditPageProps) {
   const { data, error } = await supabase
     .from("recipes")
     .select(
-      "id,title,description,time,difficulty,calories,author,likes,tag,servings,ingredients,steps,user_id"
+      "id,title,description,image_url,time,difficulty,calories,author,likes,tag,servings,ingredients,steps,user_id"
     )
     .eq("id", recipeId)
     .single();
@@ -95,6 +96,7 @@ export default async function RecipeEditPage({ params }: RecipeEditPageProps) {
 
           <form
             action={updateRecipe}
+            encType="multipart/form-data"
             className="space-y-6 rounded-3xl border border-white/20 bg-white/10 p-8 shadow-xl shadow-black/40 backdrop-blur"
           >
             <input type="hidden" name="id" value={recipe.id} />
@@ -107,6 +109,18 @@ export default async function RecipeEditPage({ params }: RecipeEditPageProps) {
                   defaultValue={recipe.title}
                   className="w-full rounded-2xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-100 shadow-sm focus:border-white focus:outline-none"
                 />
+              </label>
+              <label className="space-y-2 text-sm font-medium text-zinc-200">
+                画像ファイル
+                <input
+                  type="file"
+                  name="image_file"
+                  accept="image/*"
+                  className="w-full rounded-2xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-sm text-zinc-100 shadow-sm file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-semibold file:text-black focus:border-white focus:outline-none"
+                />
+                <span className="block text-xs text-zinc-500">
+                  画像を差し替える場合のみ選択してください。
+                </span>
               </label>
               <label className="space-y-2 text-sm font-medium text-zinc-200">
                 タグ
