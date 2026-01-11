@@ -37,7 +37,6 @@ export async function createRecipe(formData: FormData) {
     difficulty: String(formData.get("difficulty") ?? "").trim() || null,
     calories: String(formData.get("calories") ?? "").trim() || null,
     author: String(formData.get("author") ?? "").trim() || null,
-    likes: String(formData.get("likes") ?? "").trim() || null,
     tag: String(formData.get("tag") ?? "").trim() || null,
     servings: String(formData.get("servings") ?? "").trim() || null,
     ingredients: splitLines(formData.get("ingredients")),

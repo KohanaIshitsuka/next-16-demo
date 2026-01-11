@@ -11,7 +11,7 @@ type RecipeSummary = {
   difficulty: string | null;
   calories: string | null;
   author: string | null;
-  likes: string | null;
+  likes: string | number | null;
   tag: string | null;
 };
 
@@ -33,24 +33,24 @@ export default async function Home() {
   const user = authData.user;
 
   return (
-    <div className="min-h-screen bg-[#f6f1ea] text-stone-900">
+    <div className="min-h-screen bg-black text-zinc-100">
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-40 top-[-120px] h-[380px] w-[380px] rounded-full bg-amber-300/40 blur-[120px]" />
-          <div className="absolute right-[-80px] top-24 h-[420px] w-[420px] rounded-full bg-rose-300/40 blur-[140px]" />
-          <div className="absolute left-1/3 top-[420px] h-[280px] w-[280px] rounded-full bg-emerald-300/30 blur-[120px]" />
+          <div className="absolute -left-40 top-[-120px] h-[380px] w-[380px] rounded-full bg-zinc-800/40 blur-[160px]" />
+          <div className="absolute right-[-80px] top-24 h-[420px] w-[420px] rounded-full bg-zinc-700/40 blur-[180px]" />
+          <div className="absolute left-1/3 top-[420px] h-[280px] w-[280px] rounded-full bg-zinc-900/50 blur-[160px]" />
         </div>
         <main className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-12 sm:px-10 lg:px-16">
           <header className="flex flex-wrap items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-stone-900 text-lg font-semibold text-stone-50">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-lg font-semibold text-black">
                 食
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-stone-500">
+                <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                   Recipe Atelier
                 </p>
-                <h1 className="text-2xl font-semibold text-stone-900">
+                <h1 className="text-2xl font-semibold text-zinc-100">
                   レシピアトリエ
                 </h1>
               </div>
@@ -60,14 +60,14 @@ export default async function Home() {
                 <>
                   <Link
                     href="/recipes/new"
-                    className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
+                    className="rounded-full border border-zinc-700/80 bg-white/10 px-5 py-2 text-sm font-medium text-zinc-100 backdrop-blur"
                   >
                     レシピを登録
                   </Link>
                   <form action={logout}>
                     <button
                       type="submit"
-                      className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                      className="rounded-full bg-white px-5 py-2 text-sm font-medium text-black shadow-lg shadow-black/30"
                     >
                       ログアウト
                     </button>
@@ -77,13 +77,13 @@ export default async function Home() {
                 <>
                   <Link
                     href="/login"
-                    className="rounded-full border border-stone-300/80 bg-white/70 px-5 py-2 text-sm font-medium text-stone-700 backdrop-blur"
+                    className="rounded-full border border-zinc-700/80 bg-white/10 px-5 py-2 text-sm font-medium text-zinc-100 backdrop-blur"
                   >
                     ログイン
                   </Link>
                   <Link
                     href="/signup"
-                    className="rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-stone-50 shadow-lg shadow-stone-900/20"
+                    className="rounded-full bg-white px-5 py-2 text-sm font-medium text-black shadow-lg shadow-black/30"
                   >
                     新規登録
                   </Link>
@@ -95,18 +95,17 @@ export default async function Home() {
           <section className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="flex flex-col gap-8">
               <div className="space-y-5">
-                <p className="text-sm font-medium text-stone-600">
-                  今日のおすすめ・季節の食材・人気レシピをまとめて
+                <p className="text-sm font-medium text-zinc-400">
+                  今日のおすすめ・旬の食材・人気レシピをまとめて
                 </p>
-                <h2 className="text-4xl font-semibold leading-tight text-stone-900 sm:text-5xl">
+                <h2 className="text-4xl font-semibold leading-tight text-zinc-100 sm:text-5xl">
                   気分と食材から探せる、
                   <br />
                   洗練された料理レシピのギャラリー
                 </h2>
-                <p className="max-w-xl text-base leading-7 text-stone-600">
-                  次は Supabase
-                  連携で保存・検索できるようにする想定のため、まずはハードコードの
-                  レシピを並べています。気になるレシピは詳細ページへ遷移する想定です。
+                <p className="max-w-xl text-base leading-7 text-zinc-400">
+                  暮らしを豊かにする、ちょっと頑張りたい日のレシピ。
+                  旬の食材を使って、心も身体も元気に。
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
@@ -119,7 +118,7 @@ export default async function Home() {
                 ].map((label) => (
                   <span
                     key={label}
-                    className="rounded-full border border-stone-200 bg-white/70 px-4 py-2 text-xs font-semibold text-stone-700 shadow-sm backdrop-blur"
+                    className="rounded-full border border-zinc-700 bg-white/5 px-4 py-2 text-xs font-semibold text-zinc-200 shadow-sm backdrop-blur"
                   >
                     {label}
                   </span>
@@ -127,24 +126,34 @@ export default async function Home() {
               </div>
             </div>
 
-            <aside className="relative rounded-3xl border border-white/60 bg-white/70 p-6 shadow-xl shadow-stone-900/10 backdrop-blur">
-              <div className="absolute right-6 top-6 rounded-full bg-stone-900 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-stone-50">
+            <aside className="relative rounded-3xl border border-white/20 bg-white/10 p-6 shadow-xl shadow-black/40 backdrop-blur">
+              <div className="absolute right-6 top-6 rounded-full bg-white px-3 py-1 text-xs font-semibold uppercase tracking-widest text-black">
                 FEATURE
               </div>
               <div className="space-y-4">
-                <p className="text-sm font-medium text-stone-500">
-                  今週の特集
-                </p>
-                <h3 className="text-2xl font-semibold text-stone-900">
-                  低糖質でも満足感がある夕食コース
+                <p className="text-sm font-medium text-zinc-400">旬の食材特集</p>
+                <h3 className="text-2xl font-semibold text-zinc-100">
+                  冬大根の甘みを活かす、体を温める献立
                 </h3>
-                <p className="text-sm leading-6 text-stone-600">
-                  鶏むね肉、豆腐、きのこを使った 3 品構成。食後の眠気を抑えつつ、
-                  香りと彩りで満足度を上げる設計。
+                <p className="text-sm leading-6 text-zinc-400">
+                  みずみずしい大根を主役に、香りだしと合わせた 3 品を紹介。
+                  煮物・スープ・浅漬けで旨味を引き出します。
                 </p>
-                <div className="flex items-center justify-between rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
-                  <span>全 3 品 / 合計 40 分</span>
-                  <span className="font-semibold text-stone-900">詳細を見る</span>
+                <div className="space-y-3 rounded-2xl border border-white/10 bg-black/70 px-4 py-3 text-sm text-zinc-200">
+                  <div className="flex items-center justify-between">
+                    <span>旬の食材</span>
+                    <span className="font-semibold text-zinc-100">大根</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>おすすめレシピ</span>
+                    <span className="font-semibold text-zinc-100">
+                      出汁香る大根と鶏の炊き合わせ
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>所要時間</span>
+                    <span className="font-semibold text-zinc-100">合計 45 分</span>
+                  </div>
                 </div>
               </div>
             </aside>
@@ -153,16 +162,16 @@ export default async function Home() {
           <section className="space-y-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-stone-500">
+                <p className="text-sm font-medium text-zinc-400">
                   最新のレシピコレクション
                 </p>
-                <h3 className="text-2xl font-semibold text-stone-900">
+                <h3 className="text-2xl font-semibold text-zinc-100">
                   料理レシピをチェック
                 </h3>
               </div>
-              <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white/70 px-4 py-2 text-sm text-stone-600 shadow-sm backdrop-blur">
-                <span className="text-stone-400">検索</span>
-                <span className="font-medium text-stone-900">
+              <div className="flex items-center gap-2 rounded-full border border-zinc-700 bg-white/5 px-4 py-2 text-sm text-zinc-300 shadow-sm backdrop-blur">
+                <span className="text-zinc-500">検索</span>
+                <span className="font-medium text-zinc-100">
                   キーワードを入力
                 </span>
               </div>
@@ -172,40 +181,40 @@ export default async function Home() {
               {recipes.map((recipe) => (
                 <article
                   key={recipe.id}
-                  className="group relative flex h-full flex-col justify-between rounded-3xl border border-white/70 bg-white/80 p-6 shadow-lg shadow-stone-900/10 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-900/15"
+                  className="group relative flex h-full flex-col justify-between rounded-3xl border border-white/20 bg-white/10 p-6 shadow-lg shadow-black/40 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50"
                 >
-                  <div className="absolute right-6 top-6 rounded-full bg-stone-900 px-3 py-1 text-xs font-semibold text-stone-50">
+                  <div className="absolute right-6 top-6 rounded-full bg-white px-3 py-1 text-xs font-semibold text-black">
                     {recipe.tag}
                   </div>
                   <div className="space-y-4">
-                    <div className="h-32 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#fbd8a2,_#f4f0ea_60%)] p-4">
-                      <div className="flex h-full items-end justify-between text-xs font-semibold text-stone-600">
+                    <div className="h-32 w-full rounded-2xl bg-[radial-gradient(circle_at_top,_#3a3a42,_#0b0b0d_65%)] p-4">
+                      <div className="flex h-full items-end justify-between text-xs font-semibold text-zinc-300">
                         <span>{recipe.time ?? "調理時間未設定"}</span>
                         <span>{recipe.difficulty ?? "難易度未設定"}</span>
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-xl font-semibold text-stone-900">
+                      <h4 className="text-xl font-semibold text-zinc-100">
                         {recipe.title}
                       </h4>
-                      <p className="mt-2 text-sm leading-6 text-stone-600">
+                      <p className="mt-2 text-sm leading-6 text-zinc-400">
                         {recipe.description ?? "説明がまだ登録されていません。"}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-6 flex items-center justify-between text-sm text-stone-500">
+                  <div className="mt-6 flex items-center justify-between text-sm text-zinc-400">
                     <div className="space-y-1">
                       <p>
                         {recipe.author ?? "匿名"} ・{" "}
                         {recipe.calories ?? "カロリー未設定"}
                       </p>
-                      <p className="text-xs uppercase tracking-widest text-stone-400">
-                        Like {recipe.likes ?? "0"}
+                      <p className="text-xs uppercase tracking-widest text-zinc-500">
+                        Like {Number(recipe.likes ?? 0)}
                       </p>
                     </div>
                     <Link
                       href={`/recipes/${recipe.id}`}
-                      className="rounded-full border border-stone-200 bg-white px-4 py-2 text-xs font-semibold text-stone-700 transition group-hover:border-stone-900 group-hover:text-stone-900"
+                      className="rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-semibold text-zinc-100 transition group-hover:border-white group-hover:text-white"
                     >
                       レシピを見る
                     </Link>
