@@ -21,7 +21,7 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
             <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
               Welcome Back
             </p>
-            <h1 className="text-3xl font-semibold text-zinc-100">
+            <h1 className="text-3xl font-semibold text-zinc-100 font-[var(--font-display)]">
               ログイン
             </h1>
             <p className="text-sm text-zinc-400">

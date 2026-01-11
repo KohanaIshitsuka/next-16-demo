@@ -27,7 +27,7 @@ export default async function RecipeNewPage() {
               <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                 New Recipe
               </p>
-              <h1 className="text-3xl font-semibold text-zinc-100">
+              <h1 className="text-3xl font-semibold text-zinc-100 font-[var(--font-display)]">
                 レシピを登録する
               </h1>
             </div>

@@ -51,7 +51,7 @@ export default async function Home() {
                 <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                   Recipe Atelier
                 </p>
-                <h1 className="text-2xl font-semibold text-zinc-100">
+                <h1 className="text-2xl font-semibold text-zinc-100 font-[var(--font-display)]">
                   レシピアトリエ
                 </h1>
               </div>
@@ -99,10 +99,10 @@ export default async function Home() {
                 <p className="text-sm font-medium text-zinc-400">
                   今日のおすすめ・旬の食材・人気レシピをまとめて
                 </p>
-                <h2 className="text-4xl font-semibold leading-tight text-zinc-100 sm:text-5xl">
-                  気分と食材から探せる、
+                <h2 className="text-4xl font-semibold leading-tight text-zinc-100 sm:text-5xl font-[var(--font-display)]">
+                  日々を彩る上質な
                   <br />
-                  洗練された料理レシピのギャラリー
+                  レシピコレクション
                 </h2>
                 <p className="max-w-xl text-base leading-7 text-zinc-400">
                   暮らしを豊かにする、ちょっと頑張りたい日のレシピ。
@@ -133,7 +133,7 @@ export default async function Home() {
               </div>
               <div className="space-y-4">
                 <p className="text-sm font-medium text-zinc-400">旬の食材特集</p>
-                <h3 className="text-2xl font-semibold text-zinc-100">
+                <h3 className="text-2xl font-semibold text-zinc-100 font-[var(--font-display)]">
                   冬大根の甘みを活かす、体を温める献立
                 </h3>
                 <p className="text-sm leading-6 text-zinc-400">
@@ -166,7 +166,7 @@ export default async function Home() {
                 <p className="text-sm font-medium text-zinc-400">
                   最新のレシピコレクション
                 </p>
-                <h3 className="text-2xl font-semibold text-zinc-100">
+                <h3 className="text-2xl font-semibold text-zinc-100 font-[var(--font-display)]">
                   料理レシピをチェック
                 </h3>
               </div>

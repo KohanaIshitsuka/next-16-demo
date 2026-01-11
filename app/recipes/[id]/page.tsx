@@ -98,7 +98,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
               <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
                 Recipe Detail
               </p>
-              <h1 className="text-3xl font-semibold text-zinc-100">
+              <h1 className="text-3xl font-semibold text-zinc-100 font-[var(--font-display)]">
                 {recipe.title}
               </h1>
             </div>
